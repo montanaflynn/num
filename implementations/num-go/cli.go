@@ -2,15 +2,28 @@ package main
 
 import (
 	"fmt"
+	"github.com/montanaflynn/stats"
 	"os"
 	"strconv"
 )
 
+func printResultOrError(result interface{}, err error) {
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+	fmt.Println(result)
+}
+
+func printAndExit(msg interface{}) {
+	fmt.Println(msg)
+	os.Exit(1)
+}
+
 func main() {
 
 	if len(os.Args) < 3 {
-		fmt.Println("Missing function and data")
-		os.Exit(1)
+		printAndExit("Missing function and data")
 	}
 
 	var cmd = os.Args[1]
@@ -18,16 +31,10 @@ func main() {
 	if len(os.Args) == 3 {
 		datum, err := strconv.ParseFloat(os.Args[2], 64)
 		if err != nil {
-			fmt.Println(err)
-			os.Exit(1)
+			printAndExit(err)
 		}
 		if cmd == "round" {
-			result, err := Round(datum, 1)
-			if err != nil {
-				fmt.Println(err)
-				os.Exit(1)
-			}
-			fmt.Println(result)
+			printResultOrError(stats.Round(datum, 0))
 		}
 	}
 
@@ -40,24 +47,19 @@ func main() {
 			}
 		}
 		if cmd == "sum" || cmd == "total" {
-			fmt.Println(Sum(data))
+			printResultOrError(stats.Sum(data))
 		}
 
 		if cmd == "mean" || cmd == "average" {
-			fmt.Println(Mean(data))
+			printResultOrError(stats.Mean(data))
 		}
 
 		if cmd == "gmean" || cmd == "geometric-mean" {
-			fmt.Println(GeometricMean(data))
+			printResultOrError(stats.GeometricMean(data))
 		}
 
 		if cmd == "hmean" || cmd == "harmonic-mean" {
-			result, err := HarmonicMean(data)
-			if err != nil {
-				fmt.Println(err)
-				os.Exit(1)
-			}
-			fmt.Println(result)
+			printResultOrError(stats.HarmonicMean(data))
 		}
 	}
 }
